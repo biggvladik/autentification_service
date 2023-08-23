@@ -4,23 +4,20 @@ from decouple import config
 import jwt
 JWT_SECRET = 'very_secret'
 JWT_ALGORITHM = 'HS256'
-
-
-def token_response(token: str):
-    return {
-        "access_token": token
-    }
+import random
+import string
 
 
 
-def signJWT(username: str) -> Dict[str,str]:
+
+def create_access_token(username: str) -> str:
     payload = {
         'username': username,
         'expires': time.time() + 600
     }
     token = jwt.encode(payload, JWT_SECRET, algorithm=JWT_ALGORITHM)
 
-    return  token_response(token)
+    return  token
 
 
 
@@ -31,4 +28,11 @@ def decodeJWT(token: str) -> dict:
 
     except:
         return {}
+
+
+def create_refresh_token(acces_token:str):
+    random_str = ''.join(random.choices(string.ascii_lowercase, k=15))
+    temp = acces_token[len(acces_token)-10:len(acces_token)]
+    return random_str + temp
+
 
